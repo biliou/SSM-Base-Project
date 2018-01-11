@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util/spring-util-3.0.xsd 
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc 
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<!-- 自动扫描该包，除了controller类  -->
+	<context:component-scan base-package="com.bili" >
+   		<!--过滤掉控制层的注解  -->
+   		<context:exclude-filter type="annotation" 
+   			expression="org.springframework.stereotype.Controller"/>
+   	</context:component-scan>
+	
+	<!-- 引入配置数据库文件 -->
+	<context:property-placeholder location="classpath:properties/jdbc.properties" />
+
+	<!-- 配置druid数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClass}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!--配置mybaits的SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- mybatis 主配置 -->
+		<property name="configLocation" value="classpath:mybatis/mybatis-cfg.xml"></property>
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:com/bili/mapping/*.xml"></property>
+	</bean>
+	
+	<!-- 基于mapper动态代理实现的配置方式 -->
+	<!-- DAO接口所在包名，Spring会自动查找其下的类  -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!--如果有多个报路径,用逗号分开即可 -->
+		<property name="basePackage" value="com.bili.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+ 	</bean>
+	
+	<!--注册jdbc访问数据的事务管理器 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!--开启事物注解驱动 -->
+	<tx:annotation-driven transaction-manager="txManager" />
+</beans>

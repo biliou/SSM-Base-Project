@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bili.dao.UserMapper">
+	  <insert id="addUser" parameterType="user">
+	  	<selectKey keyProperty="id" resultType="int" order="AFTER">
+	  		SELECT LAST_INSERT_ID() AS id 
+	  	</selectKey>
+	  	INSERT INTO USER (user_name,password,age) VALUES (#{userName},#{password},#{age})
+	  </insert>
+	  
+	  <select id="getUserById" parameterType="int" resultType="user">
+	  	SELECT id,user_name,password,age FROM USER WHERE id = #{id}
+	  </select>
+	  
+	  <delete id="delUser" parameterType="int">
+	  	DELETE FROM USER WHERE id=#{id} 
+	  </delete>
+	  
+	  <update id="updateUser" parameterType="user">
+	  	UPDATE USER SET user_name = #{userName} WHERE id=#{id}
+	  </update>
+	  
+	  <select id="getUserList" resultType="user">
+	  	SELECT id,user_name,password,age FROM USER
+	  </select>
+</mapper>
