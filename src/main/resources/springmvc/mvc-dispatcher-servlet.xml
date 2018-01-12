@@ -44,7 +44,9 @@
 		<!-- 默认编码 -->
 		<property name="defaultEncoding" value="utf-8" />
 		<!-- 文件大小最大值 -->
-		<property name="maxUploadSize" value="10485760000" />
+		<!-- 指定上传文件的总大小，单位字节。 -->
+		<!-- 1024 = 1kb 10240001兆不到 -->
+		<property name="maxUploadSize" value="1024000" />
 		<!-- 内存中的最大值 -->
 		<property name="maxInMemorySize" value="40960" />
 	</bean>
