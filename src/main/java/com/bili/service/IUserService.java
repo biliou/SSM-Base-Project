@@ -34,5 +34,9 @@ public interface IUserService {
 	 */
 	public boolean updateUser(User user);
 	
+	/**
+	 * 获取个人信息
+	 * @return
+	 */
 	public List<User> getUsersInfo();
 }
